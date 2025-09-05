@@ -1,0 +1,18 @@
+# Core
+transformers>=4.43.0
+torch>=2.2.0
+sentence-transformers>=3.0.0
+tqdm>=4.66.0
+numpy>=1.26.0
+pandas>=2.2.0
+pydantic>=2.8.0
+pydantic-settings>=2.2.1
+python-dotenv>=1.0.1
+datasets>=2.19.0
+
+
+# Optional speed/memory extras
+accelerate>=0.28.0          # nice launcher/utilities for HF
+bitsandbytes>=0.43.0        # 8-bit/4-bit quant (Linux; bigger models on less VRAM)
+xformers>=0.0.25            # memory-efficient attention (if supported)
+flash-attn>=2.5.9           # fastest attention; Linux only, specific GPUs/compilers
