@@ -1,4 +1,5 @@
 import os, re, json, random, numpy as np
+import math
 from tqdm import tqdm
 from src.settings import settings, RunConfig
 from src.prompts import build_prompt
@@ -32,7 +33,7 @@ def run_experiment(cfg: RunConfig) -> dict:
     cache = KVSqlite(settings.CACHE_DB)
 
     # load data
-    if cfg.dataset_key == "commonsense":
+    if cfg.dataset_key == "arc":
         train = arc_loader.load_split(settings.DATA_DIR, "train")
         test  = arc_loader.load_split(settings.DATA_DIR, "test")
     else:
@@ -42,7 +43,8 @@ def run_experiment(cfg: RunConfig) -> dict:
         test = test[:cfg.max_items]
 
     # models
-    lm = HFLocal(settings.MODEL_NAME, device=settings.DEVICE, dtype=settings.DTYPE)
+    lm = HFLocal(settings.MODEL_NAME, device=settings.DEVICE, dtype=settings.DTYPE, temperature=cfg.temperature,
+                 top_p=cfg.top_p, max_new_tokens=cfg.max_new_tokens)
     emb = Embedder()
 
     gold, vote_preds = [], []
@@ -59,6 +61,7 @@ def run_experiment(cfg: RunConfig) -> dict:
             orders = [demos_k]
         else:
             seen = set()
+
             while len(orders) < cfg.n_permutations:
                 if cfg.ordering == "random":
                     o = order_random(demos_k, random)
@@ -74,7 +77,15 @@ def run_experiment(cfg: RunConfig) -> dict:
                     o = order_random(demos_k, random)
                 key = tuple(id(x) for x in o)
                 if key not in seen:
-                    orders.append(o); seen.add(key)
+                    orders.append(o)
+                    seen.add(key)
+                    # Add this block:
+                    if len(orders) == math.factorial(cfg.k):
+                        # print(f"Warning: Only {len(orders)} unique permutations possible for k={cfg.k}.")
+                        break
+        # Optionally warn if not enough unique permutations
+        # if len(orders) < cfg.n_permutations:
+        #     print(f"Warning: Only {len(orders)} unique permutations found.")
 
         # generate for each order
         preds_this = []

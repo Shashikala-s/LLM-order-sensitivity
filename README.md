@@ -108,15 +108,15 @@ Different **orders** of the *same* `k` demos.
 ```bash
 export PYTHONPATH=src
 #CPU
-python -m src.cli --dataset arc --k 5 --n_perm 50 --ordering similarity --model Qwen/Qwen2.5-7B-Instruct --out_dir outputs/arc_qwen_k5_sim
+python -m src.cli --dataset arc --k 3 --n_perm 50 --ordering similarity --model Qwen/Qwen2.5-7B-Instruct --out_dir outputs/arc_qwen_k5_sim
 #GPU (smoke test)
-python -m src.cli --dataset arc --k 3 --n_perm 10 --ordering similarity --model Qwen/Qwen2.5-7B-Instruct --device cuda --dtype float16 --max_items 100 --out_dir outputs/arc_qwen_gpu_smoke
+python -m src.cli --dataset arc --k 3 --n_perm 50 --ordering random --model Qwen/Qwen2.5-7B-Instruct --device cuda --dtype float16 --max_items 100 --out_dir outputs/arc_qwen_gpu_smoke
 ```
 
 ### Option B — Install the package (editable)
 ```bash
 pip install -e src
-python -m src.cli --dataset arc --k 5 --n_perm 50 --ordering similarity --model Qwen/Qwen2.5-7B-Instruct --out_dir outputs/arc_qwen_k5_sim
+python -m src.cli --dataset arc --k 3 --n_perm 50 --ordering similarity --model Qwen/Qwen2.5-7B-Instruct --out_dir outputs/arc_qwen_k5_sim
 ```
 
 ### Key Arguments
@@ -126,7 +126,22 @@ python -m src.cli --dataset arc --k 5 --n_perm 50 --ordering similarity --model 
 - `--ordering` : `random | similarity | length_asc | length_desc`
 - `--k_pool` : candidate pool size from train (default `50`)
 - `--vote_m` : vote over first `M` random orders (order-robust baseline)
-- `--seed` : global seed  
+- `--seed` : global seed
+- `--max_items` : limit eval to first `N` test items (for quick tests)
+- `--model` : model key or path (e.g., `Qwen/Qwen2.5-7B-Instruct`, `meta-llama/Llama-3.1-8B-Instruct`)
+- `--device` : `cpu | cuda | mps` (default `cpu`)
+- `--dtype` : `float32 | float16 | bfloat16` (default `bfloat16`) // FP16 recommended for GPU
+- `--data_dir` : path to data files (default `data/`)
+- `--out_dir` : path to write outputs (default `outputs/`)
+- `--cache_db` : path to SQLite cache (default `outputs/cache.sqlite`)
+- `--max_new_tokens` : max new tokens to generate (default `8`) // adjust for longer answers
+- `--temperature` : generation temperature (default `0.0`) // adjust for diversity
+- `--top_p` : nucleus sampling (default `1.0`) // adjust for diversity
+
+[//]: # (- `--max_length` : max generation length &#40;default `256`&#41; // adjust for longer contexts)
+[//]: # (- `--max_retries` : max model API retries &#40;default `3`&#41;)
+[//]: # (- `--retry_delay` : seconds between retries &#40;default `5`&#41;)
+[//]: # (- `--log_level` : logging level &#40;default `INFO`&#41;)
 **Overrides:** `--model, --device, --dtype, --data_dir, --out_dir, --cache_db`
 
 ### Outputs & Metrics

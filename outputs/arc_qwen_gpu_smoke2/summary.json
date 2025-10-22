@@ -1,0 +1,12 @@
+{
+  "dataset": "csqa",
+  "k": 1,
+  "ordering": "random",
+  "n_permutations": 3,
+  "accuracy_vote": 0.7,
+  "flip_rate": 0.0,
+  "best_worst_gap": 0.0,
+  "permutation_accuracies": [
+    0.7
+  ]
+}
