@@ -1,4 +1,3 @@
-# src/settings.py
 import os
 from dataclasses import dataclass
 from dotenv import load_dotenv
@@ -19,11 +18,14 @@ settings = Settings()
 
 @dataclass
 class RunConfig:
-    dataset_key: str = "commonsense"
+    dataset_key: str = "arc"
     k: int = 5
     n_permutations: int = 50
     ordering: str = "random"
-    k_pool: int = 5
+    k_pool: int = 50
     vote_m: int = 1
     seed: int = 123
     max_items: int | None = None
+    temperature: float = 0.0
+    top_p: float = 1.0
+    max_new_tokens: int = 8

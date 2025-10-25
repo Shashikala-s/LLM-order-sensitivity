@@ -1,11 +1,10 @@
-# src/models/hf_local.py
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 from .base import LM
 
 class HFLocal(LM):
-    def __init__(self, hf_name: str, device="cuda", dtype="float16", gen: dict | None = None,
-                 trust_remote_code: bool | None = None):
+    def __init__(self, hf_name: str, temperature:float, top_p:float, max_new_tokens:int, device="cuda",
+                 dtype="float16", gen: dict | None = None, trust_remote_code: bool | None = None):
         self.tok = AutoTokenizer.from_pretrained(
             hf_name, use_fast=True,
             # Qwen/Mistral sometimes need this; harmless for others:
@@ -23,7 +22,7 @@ class HFLocal(LM):
         if device not in ("auto", "balanced", "sequential"):
             self.model.to(device)
 
-        self.gen = gen or dict(max_new_tokens=8, temperature=0.0, top_p=1.0, do_sample=False)
+        self.gen = gen or dict(max_new_tokens=max_new_tokens, temperature=temperature, top_p=top_p, do_sample=False)
 
     def generate(self, prompt: str, max_new_tokens: int = 8) -> str:
         g = dict(self.gen); g["max_new_tokens"] = max_new_tokens
